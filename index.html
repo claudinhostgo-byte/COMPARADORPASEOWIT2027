@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Paseo W-IT 2026</title>
+<style>
+/* Layout: barra de marca → supuestos comunes → UNA matriz comparativa (columnas = opciones, filas = toda la info + controles) con encabezado y primera columna fijos. Tokens W-IT. */
+:root{
+  --green:#54BA00; --green-dark:#3E8A00; --green-light:#F0F9E4;
+  --blue:#1B3A50; --blue-light:#EEF4F8; --brand-bar:#1B3A50; --on-brand:#FFFFFF;
+  --ink:#242424; --muted:#616161; --line:#E0E0E0; --line-subtle:#EBEBEB;
+  --bg:#FAFAFA; --bg-subtle:#F5F5F5; --surface:#FFFFFF;
+  --success:#107C10; --warning:#B85C00; --warning-soft:#FFF4E5; --error:#C50F1F; --error-soft:#FDE7E9;
+  --title:#1B3A50; --h2:#3E8A00; --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05);
+  --font:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --lab:190px; --col:330px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --green:#6FD11A; --green-dark:#86D84A; --green-light:#1D3214;
+  --blue:#8DB8D6; --blue-light:#1A2A35; --brand-bar:#0F2433; --on-brand:#FFFFFF;
+  --ink:#E7EDF1; --muted:#A3ADB4; --line:#2A3640; --line-subtle:#24303A;
+  --bg:#10181E; --bg-subtle:#1A242C; --surface:#172229;
+  --success:#6CCB6C; --warning:#F0A54A; --warning-soft:#3A2A14; --error:#F17B84; --error-soft:#3D1D21;
+  --title:#B9D4E7; --h2:#86D84A; --shadow:0 1px 3px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --green:#6FD11A; --green-dark:#86D84A; --green-light:#1D3214;
+  --blue:#8DB8D6; --blue-light:#1A2A35; --brand-bar:#0F2433; --on-brand:#FFFFFF;
+  --ink:#E7EDF1; --muted:#A3ADB4; --line:#2A3640; --line-subtle:#24303A;
+  --bg:#10181E; --bg-subtle:#1A242C; --surface:#172229;
+  --success:#6CCB6C; --warning:#F0A54A; --warning-soft:#3A2A14; --error:#F17B84; --error-soft:#3D1D21;
+  --title:#B9D4E7; --h2:#86D84A; --shadow:0 1px 3px rgba(0,0,0,.3); color-scheme:dark}
+@media (max-width:640px){:root{--lab:118px; --col:280px}}
+*{box-sizing:border-box}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14.5px;line-height:1.45}
+.brandbar{background:var(--brand-bar);color:var(--on-brand)}
+.in{max-width:1440px;margin:0 auto;padding-inline:20px}
+.brandbar .in{padding-block:12px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brandbar img{height:40px;width:auto;display:block}
+.brandbar .tag{font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.85;font-weight:600}
+.brandbar .tag b{color:#54BA00;font-weight:600}
+main.in{padding-block:24px 40px;display:grid;gap:20px}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.2;font-weight:600}
+h1{font-size:clamp(24px,3.6vw,30px);color:var(--title)}
+h2{font-size:19px;color:var(--h2)}
+.eyebrow{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+header{display:grid;gap:10px}
+header p{margin:0;max-width:78ch;color:var(--muted)}
+.assump{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface);box-shadow:var(--shadow)}
+.field{display:grid;gap:4px}
+.field>label,.flabel{font-size:11.5px;font-weight:600;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+input[type=number],select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:6px 9px;min-width:0;font-variant-numeric:tabular-nums}
+#pax{width:110px}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+input[type=checkbox]{accent-color:var(--green-dark)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg button{font:inherit;font-size:14px;border:0;background:var(--surface);color:var(--muted);padding:6px 14px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--brand-bar);color:var(--on-brand);font-weight:600}
+.band{font-size:13px;color:var(--muted);padding:7px 12px;border-radius:4px;background:var(--green-light)}
+.band b{color:var(--green-dark)}
+.check{display:flex;gap:8px;align-items:baseline;cursor:pointer}
+
+/* Matriz */
+.mwrap{overflow:auto;max-height:calc(100vh - 24px);border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:var(--shadow)}
+.matrix{border-collapse:separate;border-spacing:0;table-layout:fixed;width:100%;min-width:calc(var(--lab) + var(--n) * var(--col))}
+.matrix col.lab{width:var(--lab)}
+.matrix th,.matrix td{padding:11px 14px;border-bottom:1px solid var(--line-subtle);vertical-align:top;text-align:left}
+.matrix td{border-left:1px solid var(--line-subtle);background:var(--surface)}
+.matrix tbody th{position:sticky;left:0;z-index:1;background:var(--surface);font-size:12.5px;font-weight:600;color:var(--muted);border-right:1px solid var(--line)}
+.matrix thead th{position:sticky;top:0;z-index:2;background:var(--brand-bar);color:var(--on-brand);font-weight:600;border-bottom:0}
+.matrix thead th.corner{left:0;z-index:3}
+.matrix thead .on{font-size:17px;line-height:1.25;display:block}
+.matrix thead .ol{font-size:12.5px;opacity:.8;font-weight:400;display:block;margin-top:2px}
+.matrix thead .eyebrow{color:var(--on-brand);opacity:.7}
+.matrix thead .hp{display:inline-flex;gap:8px;align-items:center;margin-top:8px;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.12);font-size:14px;font-variant-numeric:tabular-nums}
+.matrix thead .hp .chip{font-size:10.5px}
+.matrix tr.sec th{position:static;background:var(--blue-light);color:var(--title);font-size:12px;letter-spacing:.07em;text-transform:uppercase;padding:8px 14px;border-right:0}
+.matrix tr.sec th span{position:sticky;left:14px}
+.matrix tr.hl td,.matrix tr.hl th{background:var(--green-light)}
+.big{font-variant-numeric:tabular-nums;font-size:26px;font-weight:600;color:var(--green-dark);line-height:1.1}
+.sub{font-size:12.5px;color:var(--muted)}
+.chip{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.chip.ok{background:var(--green-light);color:var(--success)}
+.chip.warn{background:var(--warning-soft);color:var(--warning)}
+.chip.bad{background:var(--error-soft);color:var(--error)}
+.chip.info{background:var(--blue-light);color:var(--blue)}
+.matrix tr.hl .chip.ok{background:var(--surface)}
+.meter{position:relative;height:8px;border-radius:4px;background:var(--line);margin-top:8px;max-width:260px}
+.meter .bandz{position:absolute;top:0;bottom:0;background:var(--green-light);border-left:2px solid var(--green);border-right:2px solid var(--green)}
+.meter .dot{position:absolute;top:-3px;width:14px;height:14px;border-radius:50%;background:var(--blue);border:2px solid var(--surface);transform:translateX(-50%)}
+.stack{display:grid;gap:8px}
+.item{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:baseline}
+.item input{margin:0;transform:translateY(2px)}
+.item .nm{font-weight:500}
+.item .ds{grid-column:2;font-size:12px;color:var(--muted);line-height:1.35}
+.item.off .nm,.item.off .pr{text-decoration:line-through;color:var(--muted)}
+.pr{font-variant-numeric:tabular-nums;color:var(--green-dark);font-weight:600;font-size:13px;white-space:nowrap}
+.ex{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:start;padding-bottom:8px;border-bottom:1px dashed var(--line-subtle)}
+.ex:last-child{border-bottom:0;padding-bottom:0}
+.ex .ds{font-size:12px;color:var(--muted);line-height:1.35;grid-column:1}
+.ex .ctl{grid-row:1 / span 2;grid-column:2;display:flex;gap:5px;align-items:center}
+.ex input{width:58px;padding:4px 7px;text-align:right}
+.mini{font:inherit;font-size:11.5px;font-weight:600;border:1px solid var(--green);background:var(--surface);color:var(--green-dark);border-radius:4px;padding:4px 7px;cursor:pointer}
+.mini:hover{background:var(--green-light)}
+.wide{width:100%}
+.brk{width:100%;border-collapse:collapse;font-size:13px}
+.brk td{padding:3px 0;border:0;background:transparent}
+.brk td.r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;padding-left:10px}
+.brk tr.t td{font-weight:600;border-top:1px solid var(--line);padding-top:6px}
+ul.l{margin:0;padding-left:17px;display:grid;gap:4px;font-size:13px}
+ul.l li::marker{color:var(--green)}
+ul.al{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:12.5px;line-height:1.4}
+ul.al li{padding:7px 9px;border-radius:6px;background:var(--warning-soft)}
+ul.al li.info{background:var(--blue-light)}
+ul.al li.bad{background:var(--error-soft)}
+a{color:var(--blue);font-weight:600}
+.ph{border:1px dashed var(--green);border-radius:10px;padding:16px 18px;color:var(--muted);background:var(--surface)}
+.ph b{color:var(--ink)}
+details.cat{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:12px 16px}
+details.cat summary{cursor:pointer;font-weight:600;color:var(--title)}
+.catw{overflow-x:auto;margin-top:10px}
+.catt{min-width:640px;width:100%;border-collapse:collapse;font-size:13px}
+.catt th,.catt td{padding:7px 9px;border-bottom:1px solid var(--line-subtle);text-align:left;vertical-align:top}
+.catt thead th{background:var(--brand-bar);color:var(--on-brand);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em}
+.catt tbody tr:nth-child(even){background:var(--blue-light)}
+.catt .r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+footer{border-top:1px solid var(--line)}
+footer .in{padding-block:16px 26px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+footer p{margin:0;max-width:90ch}
+footer .brand{font-weight:600;color:var(--title)}
+</style>
+</head>
+<body>
+
+
+<div class="brandbar"><div class="in">
+  <img src="data:image/png;base64,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" alt="W-IT">
+  <span class="tag">Fin de año 2026</span>
+</div></div>
+
+<main class="in">
+  <header>
+    <span class="eyebrow">Actividad de fin de año del equipo</span>
+    <h1>Comparador de opciones de paseo</h1>
+    <p>Todo está en la tabla. Marca o desmarca ítems, cambia el team building, indica cuántas personas toman cada adicional y ajusta el transporte; el precio por persona de cada columna se recalcula al instante.</p>
+    <div class="assump" role="group" aria-label="Supuestos comunes">
+      <div class="field"><label for="pax">Asistentes</label><input id="pax" type="number" min="1" max="300" step="1" value="25"></div>
+      <div class="field"><span class="flabel">Mostrar montos</span>
+        <div class="seg" id="ivaSeg"><button type="button" data-v="bruto" aria-pressed="true">Con IVA</button><button type="button" data-v="neto" aria-pressed="false">Neto</button></div>
+      </div>
+      <label class="check" for="propina" style="align-self:center"><input type="checkbox" id="propina"><span>Sumar propina (10% del neto)</span></label>
+      <div class="band">Presupuesto objetivo: <b class="num">$100.000 – $150.000</b> por persona, con IVA y transporte.</div>
+    </div>
+  </header>
+
+  <div class="mwrap" id="mwrap"><table class="matrix" id="matrix"></table></div>
+
+  <div class="ph"><b>Próxima cotización.</b> Deja los documentos del proveedor en una subcarpeta de PASEO 2027 y pide agregarla; aparecerá como una columna más.</div>
+
+  <details class="cat" id="catBox">
+    <summary>Catálogo completo de team building de San Francisco Lodge (valores netos)</summary>
+    <div class="catw"><table class="catt"><thead><tr><th>Actividad</th><th>Descripción</th><th class="r">Organización</th><th class="r">Por persona</th><th class="r" id="catTotH">Total</th></tr></thead><tbody id="catBody"></tbody></table></div>
+  </details>
+</main>
+
+<footer><div class="in">
+  <p>Montos en pesos chilenos, IVA 19%. Valor por persona = total ÷ asistentes. Opiniones resumidas desde Google Maps (octubre 2026). Versión para compartir, temporal. Cifras sujetas a confirmación de cada proveedor.</p>
+  <span class="brand">W-IT · Microsoft Solutions Partner · w-it.cl</span>
+</div></footer>
+
+<script>
+const IVA = 0.19, BAND = [100000, 150000];
+
+/* ---------- Datos de opciones (una entrada por proveedor) ---------- */
+const OPTIONS = [
+{
+  id: "sfl",
+  nombre: "San Francisco Lodge & Spa",
+  lugar: "San Esteban, Región de Valparaíso",
+  distancia: "~90 min desde Santiago (según el lodge)",
+  formato: "Día completo, sin alojamiento",
+  fecha: "Viernes 11 de diciembre de 2026",
+  paxCotizados: 25,
+  ejecutivo: "",
+  email: "",
+  historial: "W-IT ya hizo su paseo aquí en un año anterior",
+  opiniones: "Muy bien evaluado en Google Maps y con muchas opiniones. Destacan el entorno, el personal y las actividades (canopy, kayak, piscina); una persona que fue a un evento de empresa elogia el asado buffet. Las críticas apuntan al camino de acceso, comida a veces fría y mucho niño.",
+  mapas: [["San Francisco Lodge en Google Maps","https://maps.google.com/?cid=7021910359655487277"]],
+  horario: "Programa de día; horarios por definir 48 h antes",
+  contactoRol: "Ejecutiva",
+  reserva: "Abono 50%; saldo al llegar. Cancelación sin costo hasta 15 días antes",
+  transporte: 300000, /* estimado entregado por Don Claudio, total del bus ida y vuelta */
+  base: [
+    {id:"desayuno", nombre:"Desayuno buffet 08:30–10:00", d:"Cafés, chocolate, té, jugo, yogurt, cereales, fruta, jamón, quesos, huevos, tocino, panes, croissant y queques. Reemplaza al coffee intermedio", pp:13445, qty:1},
+    {id:"almuerzo", nombre:"Almuerzo recomendación del chef", d:"13:30–15:00. Buffet desde 30 personas; con menos de 30 es a la carta. Sin bebidas ni aperitivos", pp:30042, qty:1},
+    {id:"bebidas", nombre:"Bebida gaseosa o mineral (2 por persona)", d:"Marca CCU, en el almuerzo", pp:2437, qty:2},
+    {id:"once", nombre:"Once", d:"Bebida o agua, hamburguesa con lechuga/tomate y helado", pp:10780, qty:1},
+    {id:"actividades", nombre:"Uso de actividades del lodge", d:"Cabalgatas (hasta 17:00), canopy, kayak, botes, stand-up paddle, tenis, minigolf, piscinas, granja, trekking autoguiado, pool", pp:23109, qty:1}
+  ],
+  extras: [
+    {id:"trago", nombre:"Ticket de trago (1 por persona)", d:"Un trago a elección: piscola, pisco sour, roncola, vodka, whisky, gin, daiquiri, piña colada, copa de vino o espumante, o cerveza.", pp:6063},
+    {id:"masaje", nombre:"Masaje relajante 30 min", d:"Masaje de 30 minutos en el spa del lodge para cada asistente.", pp:25210},
+    {id:"bebextra", nombre:"Ticket de bebida o agua extra", d:"Una gaseosa o agua mineral más (CCU), aparte de las 2 que trae el almuerzo.", pp:2437},
+    {id:"coffee", nombre:"Coffee intermedio (exterior)", d:"Café, té, jugo, tapadito, muffin, galleta y fruta al aire libre. Venía en la cotización original; se cambió por el desayuno.", pp:10395}
+  ],
+  /* Catálogo Teambuilding 2026 (PDF), valores netos: organización + valor por persona */
+  tb: [
+    {id:"none", nombre:"Sin team building", org:0, pp:0},
+    {id:"alianza", nombre:"La Alianza", org:500000, pp:15000, cot:true, d:"5 desafíos grupales (cuerdas, equilibrio, tótem, kayak, lianas). Máx. 6 equipos."},
+    {id:"tesoro", nombre:"Búsqueda del Tesoro", org:500000, pp:15000, cot:true, d:"Mapa, desafíos y rescate de la bandera de la empresa. Sin ganadores ni perdedores. Máx. 6 equipos."},
+    {id:"naufrago", nombre:"El Náufrago", org:1000000, pp:20000, cot:true, d:"Construir una balsa y completar un circuito en el agua. 2 a 6 equipos de mín. 5 personas."},
+    {id:"paintball", nombre:"Paintball", org:1000000, pp:35000, cot:true, d:"Dos modalidades de juego, 100 pelotas + recarga de 50, agua.", alerta:"El PDF indica también \"$20.000 + IVA por persona\". El Excel usa $35.000 pp; confirmar cuál aplica."},
+    {id:"naufragofull", nombre:"El Náufrago Full", org:1000000, pp:35000, d:"Balsa con roles de construcción, marketing y remo, más haka.", minPax:30, nota:"Mínimo 2 equipos de 15 personas."},
+    {id:"cumbre", nombre:"Conquistando la Cumbre", org:500000, pp:15000, d:"Orientación, supervivencia, ascenso en cuerda y cumbre.", minPax:16, nota:"Mínimo 2 equipos de 8 personas."},
+    {id:"herido", nombre:"El Herido", org:500000, pp:15000, d:"Subasta de objetos y circuito transportando a un “herido” (laguna, bosque, lianas, tótem)."},
+    {id:"arco", nombre:"Tiro con Arco", org:300000, pp:15000, d:"Clase teórica y competencia por grupos.", maxPax:18, nota:"Máximo 18 participantes."},
+    {id:"ecuestre", nombre:"Ecuestre: Formando un Jinete", org:800000, pp:42000, d:"Monta en corral y análisis sobre comunicación y liderazgo (1 h + 30 min).", minPax:4, maxPax:20, nota:"Entre 4 y 20 participantes."},
+    {id:"luz", nombre:"Actividad de la Luz", org:500000, pp:15000, d:"Fogatas, camino de velas y cierre con globos.", alerta:"Es nocturna; el programa cotizado es de día y termina con la once."},
+    {id:"granchef", nombre:"Gran Chef", org:750000, pp:30000, d:"Competencia de cocina con chef y jurado; cocktail y bar abierto mientras se cocina. No reemplaza alimentación."},
+    {id:"cocinando", nombre:"Cocinando Equipos", org:750000, pp:55000, d:"Buffet por equipos al estilo cocina profesional, con cocktail básico.", reemplaza:true},
+    {id:"parrillada", nombre:"Parrillada en Equipo", org:500000, pp:65000, d:"700 g de carne pp, pisco sour, bebida, bajativo y 1 vino cada 4. Hasta 3 horas.", reemplaza:true},
+    {id:"pizza", nombre:"Taller de Pizza y Birra", org:600000, pp:30000, d:"Pizza desde cero con chef y maridaje de 3 cervezas artesanales.", reemplaza:true},
+    {id:"brasas", nombre:"Taller de Brasas y Tinto", org:650000, pp:45000, d:"Taller de parrilla de 2 horas con maridaje de 3 vinos."},
+    {id:"karaoke", nombre:"Karaoke con Copas y Tapas", org:650000, pp:46800, d:"3 horas de karaoke, bar abierto, tapas con chef y cócteles con barman."},
+    {id:"cordero", nombre:"Corderos y Vinos", org:700000, pp:50000, d:"Cordero al palo y cata de vinos del Valle del Aconcagua, 3 horas."}
+  ],
+  defaultTb: "alianza",
+  incluye: [
+    "Desayuno buffet, almuerzo con 2 bebidas por persona y once (el desayuno reemplaza al coffee de la cotización original)",
+    "Uso de las actividades del lodge (cabalgatas, canopy, kayak, piscinas, etc.)",
+    "Infraestructura: salones, restaurante, bar-terraza, spa (spa con costo adicional)"
+  ],
+  noIncluye: [
+    "Transporte ida y vuelta",
+    "Propinas",
+    "Alcohol y bebidas adicionales (tickets aparte)",
+    "Team building (se cotiza aparte)",
+    "Alojamiento"
+  ],
+  condiciones: [
+    "Reserva de fecha con abono del 50%; saldo al llegar",
+    "Cancelación sin costo hasta 15 días antes; después, con penalización",
+    "Cambio de fecha hasta 7 días antes",
+    "Cambios de asistentes y servicios hasta 72 h antes; luego se paga lo reservado",
+    "Horarios y montaje de salones definidos 48 h antes",
+    "Prohibido ingresar comida y bebida",
+    "Sin crédito ni OC: consumos extra con garantía en tarjeta (20% para eventos de $1 a $5 millones; 25% si es menor)"
+  ],
+  alertas: [
+    {t:"info", x:"<b>Repite destino.</b> W-IT ya fue a San Francisco Lodge en un paseo anterior; pesarlo frente a opciones nuevas."},
+    {t:"warn", x:"<b>Cotizado para 25 personas.</b> Confirmar el número real de asistentes. Con 30 o más, el almuerzo pasa de a la carta a buffet."},
+    {t:"warn", x:"<b>Transporte no cotizado por el lodge.</b> Se usa un estimado de $300.000 (bus ida y vuelta, ~90 min por tramo). Reemplazar por la cotización del bus cuando llegue."},
+    {t:"warn", x:"<b>Desayuno en lugar de coffee.</b> El lodge cotizó el desayuno como “no incluido”; hay que pedir al lodge que lo sume al programa y saque el coffee. Es de 08:30 a 10:00, así que el bus tendría que salir de Santiago cerca de las 07:00."},
+    {t:"info", x:"<b>Brochure de 2024.</b> La descripción de instalaciones viene de un folleto de 2024; los precios sí son de 2026."}
+  ],
+  fuentes: ["SFL/Diciembre 11 - W IT.xlsx (cotización)", "SFL/Teambuilding 2026_cp.pdf (catálogo con precios)", "SFL/SFL_Empresas.pdf (folleto 2024)"]
+},
+{
+  id: "sdr",
+  nombre: "Santuario del Río / Casa Maipo",
+  lugar: "Cajón del Maipo, Región Metropolitana",
+  distancia: "Distancia desde Santiago por confirmar",
+  formato: "Día de campo, sin alojamiento (termina 22:00)",
+  fecha: "Viernes 11 de diciembre de 2026",
+  paxCotizados: 25,
+  contactoRol: "Contacto",
+  ejecutivo: "",
+  email: "",
+  historial: "No figura entre los lugares visitados antes",
+  opiniones: "Opiniones divididas. Elogian las vistas, la carne y el spa, pero hay quejas fuertes del servicio: nadie en recepción, aseo, hidromasaje frío. Un reclamo cuenta que reservaron en Casa Maipo y los mandaron a Santuario del Río, la misma ambigüedad de la cotización. Casa Maipo tiene opiniones algo mejores.",
+  mapas: [["Santuario del Río en Google Maps","https://maps.google.com/?cid=7864645245386902953"],["Casa Maipo en Google Maps","https://maps.google.com/?cid=13666456870163363847"]],
+  horario: "Termina a las 22:00; sin hora de inicio indicada",
+  transporte: 300000,
+  reserva: "Abono 50% y saldo 5 días hábiles antes. Cancelar cuesta al menos 20% desde la confirmación",
+  base: [
+    {id:"programa", nombre:"Programa Día de Campo", d:"Desayuno continental, uso de instalaciones todo el día, almuerzo campestre (asado con pisco sour, copa de vino y bebida) y break de tarde. Valor por persona garantizada", pp:70000, qty:1}
+  ],
+  extras: [
+    {id:"coctel", nombre:"Ticket cóctel", d:"Mojito, Aperol Spritz, Ramazzotti, piscola, pisco sour o whisky sour.", pp:6100},
+    {id:"bebida", nombre:"Ticket de bebida", d:"Gaseosa, jugo néctar o agua mineral, aparte de la que trae el almuerzo.", pp:2800},
+    {id:"snack", nombre:"Snack media tarde", d:"Mechada con queso caliente y papas fritas. Se suma al break de tarde que ya viene incluido.", pp:6500},
+    {id:"masaje", nombre:"Masaje 30 min", d:"Masaje de 30 minutos para cada asistente que lo tome.", pp:25210},
+    {id:"dj", nombre:"DJ + karaoke 3 horas", d:"Valor por evento, no por persona.", pp:350000, porEvento:true}
+  ],
+  tb: [{id:"none", nombre:"No ofrece team building", org:0, pp:0}],
+  defaultTb: "none",
+  incluye: [
+    "Desayuno continental: café de grano, té, jugos, pan amasado, queso, jamón, mantequilla, mermelada y kuchen",
+    "Almuerzo campestre: pisco sour de bienvenida, copa de vino, bebida, asado individual (lomo liso 220 g, costillar, pollo, longaniza), ensaladas, papas mayo, suspiro limeño y café",
+    "Break de tarde a las 17:00: barros jarpa con papas fritas, gaseosa y bebidas calientes",
+    "Instalaciones todo el día: piscina exterior y climatizada, hidromasaje, sauna, camas de cuarzo, tinajas, ping pong, pool, taca taca, baby fútbol y sendero"
+  ],
+  noIncluye: [
+    "Transporte ida y vuelta",
+    "Propina (sugieren 10% del neto)",
+    "Team building o actividad guiada",
+    "Cócteles y bebidas extra (tickets aparte)",
+    "DJ y masajes"
+  ],
+  condiciones: [
+    "Reserva con 50% anticipado; el otro 50%, 5 días hábiles antes",
+    "Todo se paga antes del evento, por transferencia",
+    "Cancelación: 20% desde la confirmación hasta 30 días antes; 50% entre 15 y 7 días hábiles; 85% entre 7 días hábiles y 48 h; sin devolución con menos de 48 h",
+    "Cambio de fecha sujeto a disponibilidad, puede subir el valor y debe quedar dentro de 30 días",
+    "Consumos extra con firma del encargado de W-IT; se pagan el mismo día"
+  ],
+  alertas: [
+    {t:"warn", x:"<b>No dice en cuál de los dos lugares.</b> El programa es “para Casa Maipo o Santuario del Río”. Confirmar con el proveedor el lugar y la distancia desde Santiago."},
+    {t:"warn", x:"<b>Transporte no cotizado.</b> Se usa el mismo estimado de $300.000 que en San Francisco Lodge para comparar parejo. Ajustar cuando haya precio del bus."},
+    {t:"warn", x:"<b>Propina mal calculada.</b> La cotización dice $170.000 como 10% del neto, pero el 10% de $1.750.000 es $175.000."},
+    {t:"info", x:"<b>Sin team building.</b> Es un programa de descanso y comida. Para una actividad guiada habría que contratarla aparte, o sumar el DJ + karaoke."},
+    {t:"info", x:"<b>Jornada larga.</b> Termina a las 22:00 y la cotización no indica hora de inicio ni de almuerzo."},
+    {t:"info", x:"<b>Cancelación más estricta.</b> Desde que se confirma, cancelar cuesta al menos 20%; en San Francisco Lodge es gratis hasta 15 días antes."}
+  ],
+  fuentes: ["SDR/OCT 13 W IT 25P DIC 11.pdf (propuesta Casa Maipo)"]
+},
+{
+  id: "leonera",
+  nombre: "Leonera Hotel",
+  lugar: "Codegua, Región de O'Higgins",
+  distancia: "~1,5 h desde Santiago (según una reseña; confirmar)",
+  formato: "Full day 09:30 a 18:00, sin alojamiento",
+  fecha: "Jueves 10 de diciembre de 2026 (única fecha disponible)",
+  paxCotizados: 25,
+  contactoRol: "Ejecutiva",
+  ejecutivo: "",
+  email: "",
+  historial: "No figura entre los lugares visitados antes",
+  opiniones: "La mejor evaluada de las tres en Google Maps, con reseñas muy parejas. Destacan el entorno de ex monasterio, los jardines, el spa, la comida y la cantidad de actividades. Recomiendan reservar las actividades al llegar porque hay cupos. Las piezas son sencillas (no aplica: no hay alojamiento).",
+  mapas: [["Leonera Hotel en Google Maps","https://maps.google.com/?cid=11294148202151283342"]],
+  horario: "09:30 a 18:00",
+  transporte: 300000,
+  reserva: "50% al confirmar y 50% 10 días antes. Sin multa solo hasta 30 días hábiles antes (cerca del 28 de octubre)",
+  base: [
+    {id:"programa", nombre:"Programa Full Day Loro Tricahue", d:"Bienvenida en la capilla, coffee break, senderismo a la Cueva de los Pumas, asado campestre buffet con 2 copas de vino reserva o bebidas, actividades recreativas y atardecer en el Bar Quintrala. Programa cotizado", pp:140000, qty:1}
+  ],
+  extras: [],
+  tb: [
+    {id:"none", nombre:"Loro Tricahue (senderismo)", etiqueta:"Loro Tricahue · senderismo · cotizado", org:0, pp:0},
+    {id:"queltehue", nombre:"Cambio a programa Queltehue", etiqueta:"Cambiar a Queltehue · team building · +$45.000 pp", org:0, pp:45000, d:"El programa Queltehue ($185.000 + IVA por persona) cambia el senderismo por un team building a elegir entre Rescue, Go Kart o Master Chef Coctelería. Todo lo demás es igual. Se suma la diferencia de $45.000 por persona."}
+  ],
+  tbNoneInfo: "Programa Loro Tricahue: incluye senderismo a la Cueva de los Pumas, sin team building.",
+  sinCatalogo: true,
+  defaultTb: "none",
+  incluye: [
+    "Bienvenida y recepción en la capilla",
+    "Coffee break de bienvenida: tapadito gourmet, 2 galletas artesanales, mini pastelería, fruta, café, té, infusiones y jugo",
+    "Senderismo a la Cueva de los Pumas con agua mineral",
+    "Asado campestre: buffet de ensaladas y acompañamientos, parrilla de res, pollo, embutidos, pescado y vegetales, postres chilenos y 2 copas de vino reserva o bebidas",
+    "Pádel, tenis, futbolito, sala de juegos, pool, billar, ping pong, taca taca y yoga con cuencos (previa reserva, cupos limitados)",
+    "Atardecer en el Bar Quintrala: sándwich chacarero, de mechada, de queso o vegetariano y 1 bebida, jugo, cerveza o copa de vino"
+  ],
+  noIncluye: [
+    "Transporte ida y vuelta",
+    "Propinas",
+    "Team building (solo en el programa Queltehue)",
+    "Masajes y terapias",
+    "Alojamiento"
+  ],
+  condiciones: [
+    "Carta de compromiso firmada, a más tardar 48 h después de confirmar",
+    "50% al confirmar y 50% 10 días antes del evento",
+    "Anulación sin multa hasta 30 días hábiles antes; después se pierde el 50% pagado",
+    "Cambios de servicios y asistentes hasta 10 días hábiles antes, y como máximo 10% de lo confirmado",
+    "Menú y restricciones alimentarias, al menos una semana antes"
+  ],
+  alertas: [
+    {t:"warn", x:"<b>Solo tienen el jueves 10.</b> Las otras dos opciones son para el viernes 11. Si se elige Leonera, el paseo pasa al jueves."},
+    {t:"bad", x:"<b>Sobre el presupuesto.</b> Solo el programa base cuesta $166.600 por persona con IVA, antes de transporte y propina. El tope era $150.000."},
+    {t:"warn", x:"<b>Plazo corto para anular sin multa.</b> Es hasta 30 días hábiles antes del evento, cerca del 28 de octubre (cálculo propio, confirmar con el hotel). Después de esa fecha, anular cuesta el 50% pagado."},
+    {t:"warn", x:"<b>Transporte no cotizado.</b> Se usa el mismo estimado de $300.000 que en las otras opciones para comparar parejo. Una reseña habla de ~1,5 h desde Santiago; confirmar con el proveedor del bus."},
+    {t:"info", x:"<b>Dos programas.</b> Cotizaron Loro Tricahue ($140.000 + IVA). Queltehue ($185.000 + IVA) agrega team building; puedes cambiarlo en el panel de la derecha."},
+    {t:"info", x:"<b>Cupos limitados.</b> Las actividades recreativas son con reserva previa y cupos limitados."}
+  ],
+  fuentes: ["Leonera/W IT - 10 de Diciembre.pdf (cotización RVA.105242)", "Leonera/Programa Corporativo Loro Tricahue - LH.pdf", "Leonera/Programa Corporativo Queltehue - LH.pdf"]
+}
+];
+
+/* ---------- Estado ---------- */
+const STORE_KEY = "paseo-wit-2026-v5";
+let state = { pax:25, modo:"bruto", propina:false, cfg:{} };
+try { const s = JSON.parse(localStorage.getItem(STORE_KEY) || "null"); if (s) state = Object.assign(state, s); } catch(e) {}
+OPTIONS.forEach(o => { state.cfg[o.id] = Object.assign({ tb:o.defaultTb, extras:{}, off:{}, transporte:o.transporte||0 }, state.cfg[o.id] || {}); });
+function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e) {} }
+
+const clp = n => new Intl.NumberFormat("es-CL",{style:"currency",currency:"CLP",maximumFractionDigits:0}).format(Math.round(n));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const $ = id => document.getElementById(id);
+
+/* ---------- Cálculo (función pura) ---------- */
+function calc(o, cfg, pax, conPropina){
+  const tb = o.tb.find(t => t.id === cfg.tb) || o.tb[0];
+  const lines = o.base.map(b => {
+    const forced = !!(tb.reemplaza && b.id === "almuerzo");
+    const off = forced || !!(cfg.off && cfg.off[b.id]);
+    return { ...b, total: off ? 0 : b.pp * b.qty * pax, off, forced };
+  });
+  const extras = o.extras.map(e => ({ ...e, qty: Math.max(0, Math.floor(Number(cfg.extras[e.id]) || 0)) }))
+    .filter(e => e.qty > 0).map(e => ({ ...e, total: e.pp * e.qty }));
+  const baseTotal = lines.reduce((a,l)=>a+l.total,0);
+  const extrasTotal = extras.reduce((a,e)=>a+e.total,0);
+  const tbTotal = tb.id === "none" ? 0 : tb.org + tb.pp * pax;
+  const neto = baseTotal + extrasTotal + tbTotal;
+  const iva = Math.round(neto * IVA);
+  const transporte = Math.max(0, Number(cfg.transporte) || 0);
+  const propina = conPropina ? Math.round(neto * 0.10) : 0;
+  const bruto = neto + iva + transporte + propina;
+  const avisos = [];
+  if (tb.minPax && pax < tb.minPax) avisos.push(`${tb.nombre}: requiere al menos ${tb.minPax} participantes.`);
+  if (tb.maxPax && pax > tb.maxPax) avisos.push(`${tb.nombre}: admite máximo ${tb.maxPax} participantes.`);
+  if (tb.alerta) avisos.push(tb.alerta);
+  if (tb.reemplaza) avisos.push(`${tb.nombre} reemplaza la alimentación: se descontó el almuerzo (estimación, confirmar con el proveedor).`);
+  return { tb, lines, extras, baseTotal, extrasTotal, tbTotal, neto, iva, transporte, propina, bruto,
+           ppBruto: bruto / pax, ppNeto: (neto + propina + transporte / (1+IVA)) / pax, avisos };
+}
+
+function bandChip(pp){
+  if (pp < BAND[0]) return '<span class="chip info">Bajo el rango</span>';
+  if (pp <= BAND[1]) return '<span class="chip ok">Dentro del rango</span>';
+  return '<span class="chip bad">Sobre el rango</span>';
+}
+function meter(pp){
+  const max = 250000, pct = v => Math.min(100, Math.max(0, v / max * 100));
+  return `<div class="meter" aria-hidden="true"><div class="bandz" style="left:${pct(BAND[0])}%;width:${pct(BAND[1])-pct(BAND[0])}%"></div><div class="dot" style="left:${pct(pp)}%"></div></div>`;
+}
+
+/* ---------- Construcción de la matriz (una vez) ---------- */
+function cellBase(o){
+  const cfg = state.cfg[o.id];
+  return `<div class="stack">${o.base.map(b => `
+    <label class="item" id="it-${o.id}-${b.id}" for="b-${o.id}-${b.id}">
+      <input type="checkbox" id="b-${o.id}-${b.id}" data-o="${o.id}" data-k="base" data-id="${b.id}" ${cfg.off[b.id]?"":"checked"}>
+      <span><span class="nm">${esc(b.nombre)}</span> <span class="pr">${clp(b.pp)}${b.qty>1?` × ${b.qty}`:""} pp</span></span>
+      <span class="ds">${esc(b.d)}</span>
+    </label>`).join("")}</div>`;
+}
+function cellTb(o){
+  const cfg = state.cfg[o.id];
+  if (o.tb.length < 2) return `<span class="chip warn">No ofrece</span><div class="sub" style="margin-top:6px">La cotización no incluye actividades guiadas.</div>`;
+  return `<select class="wide" id="tb-${o.id}" data-o="${o.id}" data-k="tb" aria-label="Team building ${esc(o.nombre)}">
+    ${o.tb.map(t => `<option value="${t.id}" ${t.id===cfg.tb?"selected":""}>${t.etiqueta ? esc(t.etiqueta) : `${esc(t.nombre)}${t.id!=="none"?` · ${clp(t.org)} + ${clp(t.pp)} pp`:""}${t.cot?" · cotizado":""}`}</option>`).join("")}
+  </select><div class="sub" style="margin-top:6px" id="tbd-${o.id}"></div>`;
+}
+function cellExtras(o){
+  const cfg = state.cfg[o.id];
+  if (!o.extras.length) return `<span class="sub">La cotización no trae adicionales.</span>`;
+  return `<div class="stack">${o.extras.map(e => `
+    <div class="ex">
+      <label for="x-${o.id}-${e.id}"><span class="nm">${esc(e.nombre)}</span> <span class="pr">${clp(e.pp)}${e.porEvento?" c/u":""}</span></label>
+      <span class="ds">${esc(e.d)}</span>
+      <span class="ctl"><input type="number" min="0" step="1" id="x-${o.id}-${e.id}" data-o="${o.id}" data-k="ex" data-id="${e.id}" value="${Number(cfg.extras[e.id])||0}" aria-label="Cantidad de ${esc(e.nombre)}">${e.porEvento ? "" : `<button type="button" class="mini" data-o="${o.id}" data-k="all" data-id="${e.id}">Todos</button>`}</span>
+    </div>`).join("")}</div><div class="sub" style="margin-top:6px">Cantidad = personas o tickets.</div>`;
+}
+function cellTransp(o){
+  const cfg = state.cfg[o.id];
+  return `<input type="number" class="wide" min="0" step="10000" id="t-${o.id}" data-o="${o.id}" data-k="tr" value="${cfg.transporte||0}" aria-label="Transporte ${esc(o.nombre)}">
+  <div class="sub" style="margin-top:6px">Monto total del bus, IVA incluido. Estimado, sin cotización formal.</div>`;
+}
+const list = arr => `<ul class="l">${arr.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
+
+function build(){
+  const n = OPTIONS.length;
+  const T = $("matrix");
+  T.style.setProperty("--n", n);
+  const sec = t => `<tr class="sec"><th colspan="${n+1}"><span>${t}</span></th></tr>`;
+  const row = (label, f, cls) => `<tr${cls?` class="${cls}"`:""}><th scope="row">${label}</th>${OPTIONS.map(o=>`<td>${f(o)}</td>`).join("")}</tr>`;
+  T.innerHTML =
+    `<colgroup><col class="lab">${OPTIONS.map(()=>'<col class="opt">').join("")}</colgroup>` +
+    `<thead><tr><th class="corner"><span class="eyebrow">${n} opciones</span></th>${OPTIONS.map((o,i)=>`<th scope="col"><span class="eyebrow">Opción ${i+1}</span><span class="on">${esc(o.nombre)}</span><span class="ol">${esc(o.lugar)}</span><span class="hp" id="hp-${o.id}"></span></th>`).join("")}</tr></thead><tbody>` +
+    sec("Resultado") +
+    row("Por persona", o => `<div class="big" id="pp-${o.id}"></div><div class="sub" id="ppm-${o.id}"></div>`, "hl") +
+    row("Frente al presupuesto", o => `<div id="bud-${o.id}"></div>`) +
+    row("Total del evento", o => `<div class="num" style="font-weight:600;font-size:16px" id="tot-${o.id}"></div><div class="sub" id="totm-${o.id}"></div>`) +
+    row("Desglose", o => `<div id="brk-${o.id}"></div>`) +
+    sec("Lugar y fecha") +
+    row("Ubicación", o => `${esc(o.lugar)}<div class="sub">${esc(o.distancia)}</div>`) +
+    row("Fecha", o => esc(o.fecha)) +
+    row("Formato y horario", o => `${esc(o.formato)}<div class="sub">${esc(o.horario||"")}</div>`) +
+    row("Cotizado para", o => `${o.paxCotizados} personas`) +
+    sec("Arma el programa") +
+    row("Programa base", cellBase) +
+    row("Team building", cellTb) +
+    row("Adicionales", cellExtras) +
+    row("Transporte", cellTransp) +
+    sec("Qué trae") +
+    row("Incluye", o => list(o.incluye)) +
+    row("No incluye", o => list(o.noIncluye)) +
+    sec("Condiciones") +
+    row("Reserva y pago", o => esc(o.reserva||"—")) +
+    row("Detalle de condiciones", o => list(o.condiciones)) +
+    sec("Contexto") +
+    row("Opiniones", o => `${esc(o.opiniones||"—")}${(o.mapas||[]).map(m=>`<div style="margin-top:6px"><a href="${m[1]}" target="_blank" rel="noopener">${esc(m[0])} ↗</a></div>`).join("")}`) +
+    row("Antecedente W-IT", o => esc(o.historial||"—")) +
+    row("Avisos", o => `<ul class="al" id="av-${o.id}"></ul>`) +
+        row("Fuentes", o => `<span class="sub">${o.fuentes.map(esc).join("<br>")}</span>`) +
+    `</tbody>`;
+}
+
+/* ---------- Actualización (cada cambio) ---------- */
+function update(){
+  const pax = state.pax, neto = state.modo === "neto";
+  OPTIONS.forEach(o => {
+    const r = calc(o, state.cfg[o.id], pax, state.propina);
+    $("pp-"+o.id).textContent = clp(neto ? r.ppNeto : r.ppBruto);
+    $("hp-"+o.id).innerHTML = `${clp(neto ? r.ppNeto : r.ppBruto)} pp ${bandChip(r.ppBruto)}`;
+    $("ppm-"+o.id).textContent = neto ? "neto, por persona" : `con IVA${r.transporte?", transporte":""}${r.propina?" y propina":""} · ${pax} personas`;
+    $("bud-"+o.id).innerHTML = `${bandChip(r.ppBruto)}${meter(r.ppBruto)}<div class="sub" style="margin-top:4px">${clp(r.ppBruto)} con IVA vs. rango $100.000–$150.000</div>`;
+    $("tot-"+o.id).textContent = clp(neto ? r.neto + r.propina + r.transporte/(1+IVA) : r.bruto);
+    $("totm-"+o.id).textContent = neto ? "total neto" : "total con IVA";
+    const tr = (a,b,c) => `<tr${c?` class="${c}"`:""}><td>${a}</td><td class="r">${b}</td></tr>`;
+    $("brk-"+o.id).innerHTML = `<table class="brk">` +
+      tr("Programa base", clp(r.baseTotal)) +
+      (o.tb.length > 1 ? tr(`Team building${r.tbTotal?` · ${esc(r.tb.nombre)}`:""}`, r.tbTotal ? clp(r.tbTotal) : "—") : "") +
+      (o.extras.length ? tr("Adicionales", r.extrasTotal ? clp(r.extrasTotal) : "—") : "") +
+      tr("<b>Subtotal neto</b>", `<b>${clp(r.neto)}</b>`) +
+      tr("IVA 19%", clp(r.iva)) +
+      (state.propina ? tr("Propina 10%", clp(r.propina)) : "") +
+      tr("Transporte", r.transporte ? clp(r.transporte) : "—") +
+      tr("Total con IVA", clp(r.bruto), "t") + `</table>`;
+    r.lines.forEach(l => {
+      const it = $(`it-${o.id}-${l.id}`), cb = $(`b-${o.id}-${l.id}`);
+      if (it) it.classList.toggle("off", l.off);
+      if (cb) { cb.checked = !l.off; cb.disabled = l.forced; cb.title = l.forced ? "Reemplazado por el team building elegido" : ""; }
+    });
+    const tbd = $("tbd-"+o.id);
+    if (tbd) tbd.textContent = r.tb.id === "none" ? (o.tbNoneInfo || "Sin actividad guiada; el grupo usa las actividades libres del lugar.") : (r.tb.d || "") + (r.tb.nota ? " " + r.tb.nota : "");
+    $("av-"+o.id).innerHTML = o.alertas.map(a => `<li class="${a.t}">${a.x}</li>`).concat(r.avisos.map(a => `<li class="bad">${esc(a)}</li>`)).join("");
+  });
+  renderCat();
+}
+
+function renderCat(){
+  const o = OPTIONS.find(x => x.tb.length > 2);
+  if (!o) { $("catBox").hidden = true; return; }
+  $("catTotH").textContent = `Total ${state.pax} pers.`;
+  $("catBody").innerHTML = o.tb.filter(t=>t.id!=="none").map(t => {
+    const flags = [t.cot?'<span class="chip info">Cotizado</span>':'', t.reemplaza?'<span class="chip warn">Reemplaza alimentación</span>':'', t.nota?`<span class="chip warn">${esc(t.nota)}</span>`:''].filter(Boolean).join(" ");
+    return `<tr><td><b>${esc(t.nombre)}</b>${flags?`<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px">${flags}</div>`:''}</td><td>${esc(t.d||"")}</td><td class="r">${clp(t.org)}</td><td class="r">${clp(t.pp)}</td><td class="r">${clp(t.org + t.pp*state.pax)}</td></tr>`;
+  }).join("");
+}
+
+/* ---------- Eventos ---------- */
+build();
+const M = $("matrix");
+function onCtl(e){
+  const el = e.target, oid = el.dataset && el.dataset.o; if (!oid) return;
+  const cfg = state.cfg[oid], k = el.dataset.k, id = el.dataset.id;
+  if (k === "base" && e.type === "change") cfg.off[id] = !el.checked;
+  else if (k === "tb" && e.type === "change") cfg.tb = el.value;
+  else if (k === "ex" && e.type === "input") cfg.extras[id] = Math.max(0, parseInt(el.value,10) || 0);
+  else if (k === "tr" && e.type === "input") cfg.transporte = Number(el.value) || 0;
+  else return;
+  save(); update();
+}
+M.addEventListener("change", onCtl);
+M.addEventListener("input", onCtl);
+M.addEventListener("click", e => {
+  const b = e.target.closest("button[data-k=all]"); if (!b) return;
+  state.cfg[b.dataset.o].extras[b.dataset.id] = state.pax;
+  $(`x-${b.dataset.o}-${b.dataset.id}`).value = state.pax;
+  save(); update();
+});
+const paxEl = $("pax");
+paxEl.value = state.pax;
+paxEl.addEventListener("input", e => { state.pax = Math.max(1, parseInt(e.target.value,10) || 1); save(); update(); });
+document.querySelectorAll("#ivaSeg button").forEach(b => {
+  b.setAttribute("aria-pressed", String(b.dataset.v === state.modo));
+  b.addEventListener("click", () => { state.modo = b.dataset.v; document.querySelectorAll("#ivaSeg button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); save(); update(); });
+});
+const propEl = $("propina");
+propEl.checked = !!state.propina;
+propEl.addEventListener("change", e => { state.propina = e.target.checked; save(); update(); });
+update();
+</script>
+
+</body>
+</html>
