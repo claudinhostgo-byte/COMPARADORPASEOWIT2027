@@ -235,7 +235,7 @@ const OPTIONS = [
     {id:"karaoke", nombre:"Karaoke con Copas y Tapas", org:650000, pp:46800, d:"3 horas de karaoke, bar abierto, tapas con chef y cócteles con barman."},
     {id:"cordero", nombre:"Corderos y Vinos", org:700000, pp:50000, d:"Cordero al palo y cata de vinos del Valle del Aconcagua, 3 horas."}
   ],
-  defaultTb: "alianza",
+  defaultTb: "none",
   incluye: [
     "Desayuno buffet, almuerzo con 2 bebidas por persona y once (el desayuno reemplaza al coffee de la cotización original)",
     "Uso de las actividades del lodge (cabalgatas, canopy, kayak, piscinas, etc.)",
@@ -454,7 +454,7 @@ const OPTIONS = [
 ];
 
 /* ---------- Estado ---------- */
-const STORE_KEY = "paseo-wit-2026-v5";
+const STORE_KEY = "paseo-wit-2026-v6";
 let state = { pax:25, modo:"bruto", propina:false, cfg:{} };
 try { const s = JSON.parse(localStorage.getItem(STORE_KEY) || "null"); if (s) state = Object.assign(state, s); } catch(e) {}
 OPTIONS.forEach(o => { state.cfg[o.id] = Object.assign({ tb:o.defaultTb, pkg:o.defaultPkg, extras:{}, off:{}, transporte:o.transporte||0 }, state.cfg[o.id] || {}); });
