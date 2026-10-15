@@ -384,13 +384,79 @@ const OPTIONS = [
   ],
   fuentes: ["Leonera/W IT - 10 de Diciembre.pdf (cotización RVA.105242)", "Leonera/Programa Corporativo Loro Tricahue - LH.pdf", "Leonera/Programa Corporativo Queltehue - LH.pdf"]
 }
+,
+{
+  id: "millahue",
+  nombre: "Hostería Millahue",
+  lugar: "Cajón del Maipo, Región Metropolitana",
+  distancia: "Distancia desde Santiago por confirmar",
+  formato: "Día con pensión completa, sin alojamiento",
+  fecha: "Sin fecha en el tarifario; consultar disponibilidad para el viernes 11 de diciembre",
+  paxCotizados: "Tarifario general por persona, sin cotización para W-IT",
+  contactoRol: "Contacto",
+  ejecutivo: "",
+  email: "",
+  historial: "Por confirmar",
+  opiniones: "Sin revisar todavía en Google Maps.",
+  mapas: [["Buscar Hostería Millahue en Google Maps","https://www.google.com/maps/search/?api=1&query=Hoster%C3%ADa+Millahue+Caj%C3%B3n+del+Maipo"]],
+  horario: "Horarios de llegada y salida por definir con la hostería",
+  transporte: 300000,
+  reserva: "Abono 10% del total aproximado, sin devolución; saldo el día del evento",
+  /* Tarifario con IVA; se guarda neto (÷ 1,19) para que el cálculo sea igual al de las otras opciones */
+  paquetes: [
+    {id:"ap_alm", nombre:"Aperitivo y almuerzo", bruto:44000, d:"Aperitivo de bienvenida (pisco sour, borgoña, cerveza o bebida, con empanadas) y almuerzo campestre."},
+    {id:"des_alm", nombre:"Desayuno y almuerzo", bruto:49000, d:"Desayuno (café, té, leche, jugos, barros jarpa, galletas, queques y fruta) y almuerzo campestre."},
+    {id:"alm_once", nombre:"Almuerzo y once", bruto:50000, d:"Almuerzo campestre y once de cierre (churrasco o barros luco y kuchen)."},
+    {id:"completo", nombre:"Desayuno, almuerzo y once", bruto:56000, d:"Desayuno, almuerzo campestre y once de cierre. El más parecido a los programas de día completo de las otras opciones."}
+  ],
+  defaultPkg: "completo",
+  base: [],
+  extras: [],
+  tb: [
+    {id:"none", nombre:"Sin team building", org:0, pp:0},
+    {id:"meraki", nombre:"Taller Meraki (por cotizar)", etiqueta:"Taller Meraki · por cotizar, sin monto", org:0, pp:0, d:"Meraki ofrece unos 25 talleres de autocuidado y cuidado de equipo (cohesión, confianza, comunicación, yoga, arteterapia, etc.). No informó precios, así que no suma al total.", alerta:"El taller Meraki no tiene precio: el total no lo incluye. Pedir valor para 25 personas."}
+  ],
+  tbNoneInfo: "Sin actividad guiada; el grupo usa las instalaciones de la hostería.",
+  sinCatalogo: true,
+  defaultTb: "none",
+  incluye: [
+    "Aperitivo de bienvenida: pisco sour, borgoña, cerveza, bebida o jugo, con empanadas de pino o queso (según paquete)",
+    "Desayuno: café, té, leche, jugos, barros jarpa en pan amasado, galletas, queques y fruta; opción vegetariana y celíaca (según paquete)",
+    "Almuerzo campestre: lomo, costillar de cerdo o pollo asado, ensaladas y arroz; plato vegetariano con 48 h de aviso; copa helada; café o té; bebida o cerveza; vinos y jugos; pan amasado y pebre",
+    "Once de cierre: café, té, jugo o bebida, churrasco o barros luco en pan amasado y kuchen (según paquete)",
+    "Uso libre de las instalaciones: piscina al aire libre, piscina temperada con jacuzzi, sala de reuniones, áreas verdes, terrazas y espacios para actividades"
+  ],
+  noIncluye: [
+    "Transporte ida y vuelta",
+    "Propina (sugieren entre 5% y 10%)",
+    "Spa, masajes y sauna (costo adicional, sin precio)",
+    "Actividades: dinámicas grupales, canyoning, rafting, trekking, yoga (consultar tarifas)",
+    "Team building Meraki (sin precio)",
+    "Alojamiento"
+  ],
+  condiciones: [
+    "Confirmar por correo el presupuesto aprobado, día, horarios, número de personas y encargado",
+    "Abono del 10% del total aproximado, no reembolsable ante cancelación, suspensión o cambio de fecha",
+    "Saldo el día del evento: efectivo, débito, crédito en una cuota o transferencia",
+    "Número final de asistentes reconfirmado con 4 días hábiles de anticipación; es el mínimo que se factura",
+    "Prohibido ingresar comida y bebida"
+  ],
+  alertas: [
+    {t:"warn", x:"<b>No es una cotización para W-IT.</b> Es el tarifario general por persona: no indica fecha, cantidad de personas ni total. Pedir cotización formal y disponibilidad para el 11 de diciembre."},
+    {t:"warn", x:"<b>Team building sin precio.</b> Meraki envió su catálogo de talleres sin valores. Sin taller, la opción queda bajo el rango de presupuesto."},
+    {t:"warn", x:"<b>Transporte no cotizado.</b> Se usa el mismo estimado de $300.000 que en las otras opciones para comparar parejo."},
+    {t:"info", x:"<b>Abono sin devolución.</b> El 10% no se devuelve si se cancela, suspende o cambia la fecha. Se factura al menos el número confirmado 4 días hábiles antes."},
+    {t:"info", x:"<b>Precios con IVA.</b> El tarifario viene con IVA incluido; aquí se muestra neto (÷ 1,19) para calcular igual que las demás opciones."}
+  ],
+  fuentes: ["MILLAHUE/Presupuesto Millahue por Día - Cajón del Maipo.pdf (tarifario)", "MILLAHUE/CAPACITACIONES MERAKI.pdf (catálogo de talleres, sin precios)"]
+}
 ];
 
 /* ---------- Estado ---------- */
 const STORE_KEY = "paseo-wit-2026-v5";
 let state = { pax:25, modo:"bruto", propina:false, cfg:{} };
 try { const s = JSON.parse(localStorage.getItem(STORE_KEY) || "null"); if (s) state = Object.assign(state, s); } catch(e) {}
-OPTIONS.forEach(o => { state.cfg[o.id] = Object.assign({ tb:o.defaultTb, extras:{}, off:{}, transporte:o.transporte||0 }, state.cfg[o.id] || {}); });
+OPTIONS.forEach(o => { state.cfg[o.id] = Object.assign({ tb:o.defaultTb, pkg:o.defaultPkg, extras:{}, off:{}, transporte:o.transporte||0 }, state.cfg[o.id] || {}); });
 function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e) {} }
 
 const clp = n => new Intl.NumberFormat("es-CL",{style:"currency",currency:"CLP",maximumFractionDigits:0}).format(Math.round(n));
@@ -400,7 +466,9 @@ const $ = id => document.getElementById(id);
 /* ---------- Cálculo (función pura) ---------- */
 function calc(o, cfg, pax, conPropina){
   const tb = o.tb.find(t => t.id === cfg.tb) || o.tb[0];
-  const lines = o.base.map(b => {
+  const pkg = o.paquetes && (o.paquetes.find(p => p.id === cfg.pkg) || o.paquetes[0]);
+  const base = pkg ? [{id:"paquete", nombre:pkg.nombre, pp:pkg.bruto / (1+IVA), qty:1}] : o.base;
+  const lines = base.map(b => {
     const forced = !!(tb.reemplaza && b.id === "almuerzo");
     const off = forced || !!(cfg.off && cfg.off[b.id]);
     return { ...b, total: off ? 0 : b.pp * b.qty * pax, off, forced };
@@ -437,6 +505,9 @@ function meter(pp){
 /* ---------- Construcción de la matriz (una vez) ---------- */
 function cellBase(o){
   const cfg = state.cfg[o.id];
+  if (o.paquetes) return `<select class="wide" id="pkg-${o.id}" data-o="${o.id}" data-k="pkg" aria-label="Paquete ${esc(o.nombre)}">
+    ${o.paquetes.map(p => `<option value="${p.id}" ${p.id===cfg.pkg?"selected":""}>${esc(p.nombre)} · ${clp(p.bruto)} pp con IVA</option>`).join("")}
+  </select><div class="sub" style="margin-top:6px" id="pkgd-${o.id}"></div>`;
   return `<div class="stack">${o.base.map(b => `
     <label class="item" id="it-${o.id}-${b.id}" for="b-${o.id}-${b.id}">
       <input type="checkbox" id="b-${o.id}-${b.id}" data-o="${o.id}" data-k="base" data-id="${b.id}" ${cfg.off[b.id]?"":"checked"}>
@@ -486,7 +557,7 @@ function build(){
     row("Ubicación", o => `${esc(o.lugar)}<div class="sub">${esc(o.distancia)}</div>`) +
     row("Fecha", o => esc(o.fecha)) +
     row("Formato y horario", o => `${esc(o.formato)}<div class="sub">${esc(o.horario||"")}</div>`) +
-    row("Cotizado para", o => `${o.paxCotizados} personas`) +
+    row("Cotizado para", o => typeof o.paxCotizados === "number" ? `${o.paxCotizados} personas` : esc(o.paxCotizados)) +
     sec("Arma el programa") +
     row("Programa base", cellBase) +
     row("Team building", cellTb) +
@@ -532,6 +603,8 @@ function update(){
       if (it) it.classList.toggle("off", l.off);
       if (cb) { cb.checked = !l.off; cb.disabled = l.forced; cb.title = l.forced ? "Reemplazado por el team building elegido" : ""; }
     });
+    const pkgd = $("pkgd-"+o.id);
+    if (pkgd) { const p = o.paquetes.find(x => x.id === state.cfg[o.id].pkg) || o.paquetes[0]; pkgd.textContent = `${p.d} Neto: ${clp(p.bruto/(1+IVA))} pp.`; }
     const tbd = $("tbd-"+o.id);
     if (tbd) tbd.textContent = r.tb.id === "none" ? (o.tbNoneInfo || "Sin actividad guiada; el grupo usa las actividades libres del lugar.") : (r.tb.d || "") + (r.tb.nota ? " " + r.tb.nota : "");
     $("av-"+o.id).innerHTML = o.alertas.map(a => `<li class="${a.t}">${a.x}</li>`).concat(r.avisos.map(a => `<li class="bad">${esc(a)}</li>`)).join("");
@@ -557,6 +630,7 @@ function onCtl(e){
   const cfg = state.cfg[oid], k = el.dataset.k, id = el.dataset.id;
   if (k === "base" && e.type === "change") cfg.off[id] = !el.checked;
   else if (k === "tb" && e.type === "change") cfg.tb = el.value;
+  else if (k === "pkg" && e.type === "change") cfg.pkg = el.value;
   else if (k === "ex" && e.type === "input") cfg.extras[id] = Math.max(0, parseInt(el.value,10) || 0);
   else if (k === "tr" && e.type === "input") cfg.transporte = Number(el.value) || 0;
   else return;

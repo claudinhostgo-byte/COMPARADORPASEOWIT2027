@@ -1,6 +1,6 @@
 # Comparador paseo fin de año W-IT 2026
 
-Página estática (un solo archivo, `index.html`) para comparar las cotizaciones del paseo de fin de año: San Francisco Lodge, Santuario del Río / Casa Maipo y Leonera Hotel.
+Página estática (un solo archivo, `index.html`) para comparar las cotizaciones del paseo de fin de año: San Francisco Lodge, Santuario del Río / Casa Maipo, Leonera Hotel y Hostería Millahue.
 
 - Se puede elegir el número de asistentes, el team building, los adicionales, el transporte y si se suma la propina; el precio por persona se recalcula en el navegador.
 - No usa servidor ni dependencias externas.
